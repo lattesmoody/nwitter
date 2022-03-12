@@ -1,6 +1,7 @@
 import { dbService } from "fbase";
 import React, { useEffect, useState } from "react";
 import {onSnapshot, query, orderBy, addDoc, collection } from "firebase/firestore";
+import Post from "components/Post";
 
 const Home= ({userObj}) => {
     const [post, setPost] = useState("");
@@ -52,9 +53,8 @@ const Home= ({userObj}) => {
             </form>
             <div>
                 {posts.map((post) =>(
-                    <div key = {post.id}>
-                        <h4>{post.text}</h4>
-                    </div>    
+                  <Post key ={post.id} postObj = {post} 
+                  isOwner = {post.creatorId === userObj.uid}/>
                 ))}
             </div>
         </div>
