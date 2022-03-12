@@ -22,3 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .env
+
+# NoSQL 
+# 1. collection : 폴더(문서 그룹), document : 문서
