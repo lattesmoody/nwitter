@@ -55,7 +55,8 @@ const Home= ({userObj}) => {
                 {posts.map((post) =>(
                   <Post key ={post.id} postObj = {post} 
                   isOwner = {post.creatorId === userObj.uid}/>
-                ))}
+                ))} 
+
             </div>
         </div>
     );
