@@ -1,5 +1,6 @@
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import {doc,deleteDoc, updateDoc} from "firebase/firestore";
+import { deleteObject, ref } from "@firebase/storage";
 import React, { useState } from "react";
 
 const Post = ({postObj,isOwner}) => {
@@ -10,6 +11,7 @@ const Post = ({postObj,isOwner}) => {
         const ok = window.confirm("삭제하시겠습니까?");
         if(ok){
             await deleteDoc(PostTextRef);
+            await deleteObject(ref(storageService,postObj.attachmentUrl));
         }
     }
     const toggleEditing = () => setEditing((prev) => !prev);
