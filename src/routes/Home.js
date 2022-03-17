@@ -1,32 +1,15 @@
-import { dbService } from "fbase";
+import { dbService,storageService } from "fbase";
 import React, { useEffect, useState } from "react";
 import {onSnapshot, query, orderBy, addDoc, collection } from "firebase/firestore";
 import Post from "components/Post";
-import {ref, uploadString} from "@firebase/storage";
-
-// 앞으로 추가해야 할 내용 (4.2) 1분 53초부터 
-// const fileRef = ref(storageService, `${userObj.uid}/${v4()}`);
-// const response = await uploadString(fileRef, attachment, "data_url");
-// console.log(response);
-
+import {ref, uploadString,getDownloadURL,} from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
 
 const Home= ({userObj}) => {
     const [post, setPost] = useState("");
     const [posts, setPosts] = useState([]);
-    // const getposts = async () => {
-    //     const dbposts = await getDocs(collection(dbService, "posts"));
-    //     dbposts.forEach((document) => {
-    //         const storyObject = {
-    //             ...document.data(), // 가져온 데이터 언팩킹(ES6 강의 참조 - spread attribute)
-    //             id: document.id,
-    //         };
-    //       setPosts((prev) => [storyObject, ...prev]);
-    //       // set~ 함수 사용 시 값 대신에 함수를 전달 가능.
-    //       // 함수 전달하면 리액트는 이전 값에 접근할 수 있게 해준다.
-    //       // 바로 위 함수는 배열 리턴. (document와 이전 document.)
-    //     });
-    // };
-    const [attachment, setAttachment] = useState();
+   
+    const [attachment, setAttachment] = useState("");
     useEffect(() =>{
         const q = query(
             collection(dbService, "posts"),
@@ -42,13 +25,21 @@ const Home= ({userObj}) => {
     }, []);
     const onSubmit = async(event) =>{ // 3분 11초
         event.preventDefault();
-        // await addDoc(collection(dbService, "posts"), {
-        //     text : post,
-        //     createdAt: Date.now(),
-        //     creatorId: userObj.uid
-        // });
-        // setPost("");
-
+        let attachmentUrl ="";
+        if(attachment !== ""){
+            const attachmentRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
+        const response = await uploadString(attachmentRef, attachment, "data_url");
+        attachmentUrl = await getDownloadURL(response.ref);
+        }
+        const postObj ={
+            text : post,
+            createdAt: Date.now(),
+            creatorId: userObj.uid,
+            attachmentUrl
+        };
+        await addDoc(collection(dbService, "posts"),postObj);
+        setPost("");
+        setAttachment("");
     };
     const onChange = (event) => {
         const {target:{value}} = event; // event안에 있는 target 안에 있는 value를 달라.
@@ -68,7 +59,7 @@ const Home= ({userObj}) => {
         };
         reader.readAsDataURL(theFile);
     };
-    const onClearAttachment = () => setAttachment(null)
+    const onClearAttachment = () => setAttachment("")
     return (
         <div>
             <form onSubmit ={onSubmit}>
