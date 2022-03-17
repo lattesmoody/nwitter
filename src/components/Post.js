@@ -8,7 +8,6 @@ const Post = ({postObj,isOwner}) => {
     const PostTextRef = doc(dbService, "posts", `${postObj.id}`);
     const onDeleteClick = async() => {
         const ok = window.confirm("삭제하시겠습니까?");
-        console.log(ok);
         if(ok){
             await deleteDoc(PostTextRef);
         }
@@ -42,6 +41,9 @@ const Post = ({postObj,isOwner}) => {
         ) : (
             <>
                 <h4>{postObj.text}</h4>
+                {postObj.attachmentUrl &&(
+                    <img src={postObj.attachmentUrl} width ="50px" height = "50px"/>
+                )}
                 {isOwner && (
                 <>
                     <button onClick={onDeleteClick}>Delete Post</button>
