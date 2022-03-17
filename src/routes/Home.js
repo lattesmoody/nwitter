@@ -2,6 +2,13 @@ import { dbService } from "fbase";
 import React, { useEffect, useState } from "react";
 import {onSnapshot, query, orderBy, addDoc, collection } from "firebase/firestore";
 import Post from "components/Post";
+import {ref, uploadString} from "@firebase/storage";
+
+// 앞으로 추가해야 할 내용 (4.2) 1분 53초부터 
+// const fileRef = ref(storageService, `${userObj.uid}/${v4()}`);
+// const response = await uploadString(fileRef, attachment, "data_url");
+// console.log(response);
+
 
 const Home= ({userObj}) => {
     const [post, setPost] = useState("");
@@ -19,6 +26,7 @@ const Home= ({userObj}) => {
     //       // 바로 위 함수는 배열 리턴. (document와 이전 document.)
     //     });
     // };
+    const [attachment, setAttachment] = useState();
     useEffect(() =>{
         const q = query(
             collection(dbService, "posts"),
@@ -32,24 +40,47 @@ const Home= ({userObj}) => {
             setPosts(storyArr);
         });
     }, []);
-    const onSubmit = async(event) =>{
+    const onSubmit = async(event) =>{ // 3분 11초
         event.preventDefault();
-        await addDoc(collection(dbService, "posts"), {
-            text : post,
-            createdAt: Date.now(),
-            creatorId: userObj.uid
-        });
-        setPost("");
+        // await addDoc(collection(dbService, "posts"), {
+        //     text : post,
+        //     createdAt: Date.now(),
+        //     creatorId: userObj.uid
+        // });
+        // setPost("");
+
     };
     const onChange = (event) => {
         const {target:{value}} = event; // event안에 있는 target 안에 있는 value를 달라.
         setPost(value);
     };
+    const onFileChange = (event) => {
+        const {
+            target: {files}
+        } = event;
+        const theFile = files[0];
+        const reader = new FileReader();
+        reader.onloadend = (finishedEvent) => {
+            const {
+                currentTarget: {result},
+            } = finishedEvent;
+            setAttachment(result);
+        };
+        reader.readAsDataURL(theFile);
+    };
+    const onClearAttachment = () => setAttachment(null)
     return (
         <div>
             <form onSubmit ={onSubmit}>
                 <input value = {post} onChange={onChange} type = "text" placeholder="what' on your mind?" maxLength={120} />
+                <input type = "file" accept = "image/*" onChange={onFileChange}/>
                 <input type = "submit" value = "post"/>
+                {attachment && (
+                <div>
+                    <img src ={attachment} width="50px" height = "50px"/>
+                    <button onClick={onClearAttachment}>Clear</button>
+                </div>
+                )}
             </form>
             <div>
                 {posts.map((post) =>(
