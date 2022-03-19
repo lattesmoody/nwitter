@@ -11,6 +11,7 @@ import {
     GoogleAuthProvider,
     GithubAuthProvider, } from 'firebase/auth';
 import AuthForm from "components/AuthForm";
+import { faCameraRetro } from "@fortawesome/free-solid-svg-icons";
 
 
 const Auth= () => {
@@ -30,7 +31,7 @@ const Auth= () => {
     return (
         <div className="authContainer">
         <FontAwesomeIcon
-          icon={faTwitter}
+          icon={faCameraRetro}
           color={"#04AAFF"}
           size="3x"
           style={{ marginBottom: 30 }}
