@@ -18,7 +18,8 @@ function App() {
           updateProfile: (args) => 
           updateProfile(user, { displayName: user.displayName }),
         });
-        if (user.displayName === null) {
+        
+        if (userObj.displayName === null) {
           const name = user.email.split("@")[0];
           user.displayName = name;
         }
@@ -48,7 +49,6 @@ function App() {
       /> 
       ) : ("Initializing...."
      )}
-    <footer>&copy;{new Date().getFullYear()} chocodoit</footer>
     </>
   );
 }
